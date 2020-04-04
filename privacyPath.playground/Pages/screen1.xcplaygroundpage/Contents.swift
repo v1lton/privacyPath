@@ -82,8 +82,8 @@ class MyViewController : UIViewController {
     func setupTextLabel() {
         questionView.addSubview(textLabel)
         textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 400)
-        textLabel.numberOfLines = 7
-        let text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo."
+        textLabel.numberOfLines = 0
+        let text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo..."
         textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: text)
         textLabel.typeOn()
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
@@ -106,8 +106,6 @@ class MyViewController : UIViewController {
         attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
         return attributedString
     }
-    
-    
 }
 
 let mvc = MyViewController()
@@ -120,6 +118,14 @@ extension UILabel {
         var characterIndex = 0
         self.text! = ""
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (timer) in
+            while characterArray[characterIndex] == " " {
+                self.text!.append(" ")
+                characterIndex += 1
+                if characterIndex == characterArray.count {
+                    timer.invalidate()
+                    return
+                }
+            }
             self.text!.append(characterArray[characterIndex])
             characterIndex += 1
             if characterIndex == characterArray.count {
