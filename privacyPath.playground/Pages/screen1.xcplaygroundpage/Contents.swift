@@ -3,6 +3,9 @@
 import UIKit
 import PlaygroundSupport
 
+let cfURL = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
+CTFontManagerRegisterFontsForURL(cfURL, CTFontManagerScope.process, nil)
+
 class MyViewController : UIViewController {
     let questionView = UIView()
     let backgroundImageView = UIImageView()
@@ -10,17 +13,24 @@ class MyViewController : UIViewController {
     let lockImageView = UIImageView()
     let cloudImageView = UIImageView()
     let textLabel = UILabel()
+    let nextButton = UIButton()
+    let buttonImage: UIImage = UIImage(named: "next.png")!
     
     override func loadView() {
         let view = UIView()
         view.backgroundColor = .white
         self.view = view
+        setupViews()
+    }
+    
+    func setupViews() {
         setupBackgroundImageView()
         setupQuestionView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
         setupTextLabel()
+        setupButton()
     }
     
     func setupQuestionView() {
@@ -29,14 +39,21 @@ class MyViewController : UIViewController {
         questionView.translatesAutoresizingMaskIntoConstraints = false
         questionView.layer.cornerRadius = 12
         questionView.backgroundColor = #colorLiteral(red: 0.8941176471, green: 0.9411764706, blue: 0.9647058824, alpha: 1) //#E4F0F6
+        setupShadow(questionView)
     }
     
     func setupBackgroundImageView() {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
-        questionView.translatesAutoresizingMaskIntoConstraints = false
+        //questionView.translatesAutoresizingMaskIntoConstraints = false
         backgroundImageView.image = UIImage(named: "background.png")
         backgroundImageView.alpha = 0.8
+    }
+    
+    func setupButton() {
+        questionView.addSubview(nextButton)
+        nextButton.frame = CGRect(x: 613, y: 354, width: 35, height: 45)
+        nextButton.setImage(buttonImage, for: .normal)
     }
     
     func setupFaceImageView() {
@@ -64,11 +81,63 @@ class MyViewController : UIViewController {
     
     func setupTextLabel() {
         questionView.addSubview(textLabel)
-        textLabel.frame = CGRect(x: 138, y: 33, width: 510, height: 320)
-        textLabel.text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\n Eu estava andando em um parque e me acabei me perdendo. Eu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo."
+        textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 400)
+        textLabel.numberOfLines = 7
+        let text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo."
+        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: text)
+        textLabel.typeOn()
+        textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
     }
+    
+    func setupShadow(_ view: UIView) {
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.6
+        view.layer.shadowOffset = .zero
+        view.layer.shadowRadius = 12
+        view.layer.shadowPath = UIBezierPath(rect: view.bounds).cgPath
+        view.layer.shouldRasterize = true
+        view.layer.rasterizationScale = UIScreen.main.scale
+    }
+    
+    func setLineSpacing(lineSpacing: Int,text: String) -> NSAttributedString {
+        let attributedString = NSMutableAttributedString(string: text)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = CGFloat(lineSpacing)
+        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
+        return attributedString
+    }
+    
+    
 }
 
 let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
+
+extension UILabel {
+    func typeOn() {
+        let characterArray = self.text!.characterArray
+        var characterIndex = 0
+        self.text! = ""
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (timer) in
+            self.text!.append(characterArray[characterIndex])
+            characterIndex += 1
+            if characterIndex == characterArray.count {
+                timer.invalidate()
+            }
+        }
+    }
+}
+
+extension String {
+    var characterArray: [Character]{
+        var characterArray = [Character]()
+        for character in self {
+            characterArray.append(character)
+        }
+        return characterArray
+    }
+}
+
+
+
