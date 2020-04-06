@@ -84,7 +84,9 @@ class MyViewController : UIViewController {
         textLabel.numberOfLines = 0
         let text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo..."
         textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: text)
-        textLabel.typeOn()
+        textLabel.typeOn {
+            self.textLabel.text = ""
+        }
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
     }
     
@@ -112,7 +114,7 @@ mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
 
 extension UILabel {
-    func typeOn() {
+    func typeOn(completion: (() -> Void)? = nil) {
         let characterArray = self.text!.characterArray
         var characterIndex = 0
         self.text! = ""
@@ -129,6 +131,7 @@ extension UILabel {
             characterIndex += 1
             if characterIndex == characterArray.count {
                 timer.invalidate()
+                completion?()
             }
         }
     }
