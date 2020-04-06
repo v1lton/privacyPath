@@ -6,15 +6,18 @@ import PlaygroundSupport
 let cfURL = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
 CTFontManagerRegisterFontsForURL(cfURL, CTFontManagerScope.process, nil)
 
+let presentetionTexts = ["Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas tem alguém me perseguindo...", "Pelo o que eu consegui perceber, quem está me perseguindo quer roubar todos os meus dados. \nEu estou assustado porque não quero minhas informações com um desconhecido...", "Preciso que você me ajude a despitá-lo!\nEu tenho que aumentar meu nível de segurança para conseguir fugir. Para isso, você precisa responder algumas perguntas...", "Mas cuidado! 3 respostas erradas significam a perda de todos os meus dados.\nPronto para me ajudar?"]
+
 class MyViewController : UIViewController {
     let questionView = UIView()
     let backgroundImageView = UIImageView()
     let faceImageView = UIImageView()
     let lockImageView = UIImageView()
     let cloudImageView = UIImageView()
-    let textLabel = UILabel()
+    let textLabel = UITextView()
     let nextButton = UIButton()
     let buttonImage: UIImage = UIImage(named: "next.png")!
+    var pageNumber = 0
     
     override func loadView() {
         let view = UIView()
@@ -23,13 +26,17 @@ class MyViewController : UIViewController {
         setupViews()
     }
     
+    override func viewDidLoad() {
+        nextButton.addTarget(self, action: #selector(MyViewController.touchedNextButton), for: .touchUpInside)
+    }
+    
     func setupViews() {
         setupBackgroundImageView()
         setupQuestionView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
-        setupTextLabel()
+        setupTextLabel(pageNumber: 0)
         setupButton()
     }
     
@@ -51,7 +58,7 @@ class MyViewController : UIViewController {
     
     func setupButton() {
         questionView.addSubview(nextButton)
-        nextButton.frame = CGRect(x: 613, y: 354, width: 35, height: 45)
+        nextButton.frame = CGRect(x: 700, y: 450, width: 35, height: 45)
         nextButton.setImage(buttonImage, for: .normal)
     }
     
@@ -64,7 +71,7 @@ class MyViewController : UIViewController {
     
     func setupLockImageView() {
         questionView.addSubview(lockImageView)
-        lockImageView.frame = CGRect(x: 636, y: 36, width: 68, height: 68)
+        lockImageView.frame = CGRect(x: 650, y: 36, width: 68, height: 68)
         lockImageView.transform = CGAffineTransform(rotationAngle: 125.5)
         lockImageView.translatesAutoresizingMaskIntoConstraints = false
         lockImageView.image = UIImage(named: "lock.png")
@@ -78,16 +85,22 @@ class MyViewController : UIViewController {
         cloudImageView.image = UIImage(named: "cloud.png")
     }
     
-    func setupTextLabel() {
+    func setupTextLabel(pageNumber: Int) {
         questionView.addSubview(textLabel)
         textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 400)
-        textLabel.numberOfLines = 0
-        let text = "Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas percebi alguém me perseguindo..."
-        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: text)
-        textLabel.typeOn {
-            self.textLabel.text = ""
-        }
+        //textLabel.numberOfLines = 0
+        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: presentetionTexts[pageNumber])
+        textLabel.typeOn()
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
+        textLabel.backgroundColor = questionView.backgroundColor
+        textLabel.isUserInteractionEnabled = false
+    }
+    
+    @IBAction func touchedNextButton() {
+        if pageNumber < 3 {
+        pageNumber += 1
+        setupTextLabel(pageNumber: pageNumber)
+        }
     }
     
     func setupShadow(_ view: UIView) {
@@ -107,14 +120,15 @@ class MyViewController : UIViewController {
         attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
         return attributedString
     }
+    
 }
 
 let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
 
-extension UILabel {
-    func typeOn(completion: (() -> Void)? = nil) {
+extension UITextView {
+    func typeOn() {
         let characterArray = self.text!.characterArray
         var characterIndex = 0
         self.text! = ""
@@ -131,7 +145,6 @@ extension UILabel {
             characterIndex += 1
             if characterIndex == characterArray.count {
                 timer.invalidate()
-                completion?()
             }
         }
     }
