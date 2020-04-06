@@ -45,7 +45,6 @@ class MyViewController : UIViewController {
     func setupBackgroundImageView() {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
-        //questionView.translatesAutoresizingMaskIntoConstraints = false
         backgroundImageView.image = UIImage(named: "background.png")
         backgroundImageView.alpha = 0.8
     }
