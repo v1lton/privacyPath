@@ -3,21 +3,37 @@
 import UIKit
 import PlaygroundSupport
 
+
 let cfURL = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
 CTFontManagerRegisterFontsForURL(cfURL, CTFontManagerScope.process, nil)
 
 let presentetionTexts = ["Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas tem alguém me perseguindo...", "Pelo o que eu consegui perceber, quem está me perseguindo quer roubar todos os meus dados. \nEu estou assustado porque não quero minhas informações com um desconhecido...", "Preciso que você me ajude a despitá-lo!\nEu tenho que aumentar meu nível de segurança para conseguir fugir. Para isso, você precisa responder algumas perguntas...", "Mas cuidado! 3 respostas erradas significam a perda de todos os meus dados.\nPronto para me ajudar?"]
 
 class MyViewController : UIViewController {
+    var pageNumber = 0
+    
+    
+    //****UIs****
+    //UIView
     let questionView = UIView()
+    
+    //UIButton
+    let nextButton = UIButton()
+    let joaoButton = UIButton()
+    
+    //UIImage
+    let buttonImage: UIImage = UIImage(named: "next.png")!
+    
+    //UIImageView
     let backgroundImageView = UIImageView()
     let faceImageView = UIImageView()
     let lockImageView = UIImageView()
     let cloudImageView = UIImageView()
+    let elipseBlueImageView = UIImageView()
+    
+    //UITextView
     let textLabel = UITextView()
-    let nextButton = UIButton()
-    let buttonImage: UIImage = UIImage(named: "next.png")!
-    var pageNumber = 0
+    
     
     override func loadView() {
         let view = UIView()
@@ -28,16 +44,34 @@ class MyViewController : UIViewController {
     
     override func viewDidLoad() {
         nextButton.addTarget(self, action: #selector(MyViewController.touchedNextButton), for: .touchUpInside)
+        joaoButton.addTarget(self, action: #selector(MyViewController.touchedJoaoButton), for: .touchUpInside)
+        joaoButton.flash()
     }
     
+    //MARK: Setups
     func setupViews() {
         setupBackgroundImageView()
+         //setupElipseBlueImageView()
+        setupJoaoButton()
         setupQuestionView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
         setupTextLabel(pageNumber: 0)
-        setupButton()
+        setupNextButton()
+    }
+    
+    func setupJoaoButton() {
+        view.addSubview(joaoButton)
+        joaoButton.frame = CGRect(x: 124, y: 354, width: 34, height: 34)
+        joaoButton.setImage(UIImage(named:"elipseBlue.png"), for: .normal)
+    }
+    
+    
+    func setupElipseBlueImageView() {
+        view.addSubview(elipseBlueImageView)
+        elipseBlueImageView.frame = CGRect(x: 124, y: 354, width: 34, height: 34)
+        elipseBlueImageView.image = UIImage(named: "elipseBlue.png")
     }
     
     func setupQuestionView() {
@@ -56,11 +90,12 @@ class MyViewController : UIViewController {
         backgroundImageView.alpha = 0.8
     }
     
-    func setupButton() {
+    func setupNextButton() {
         questionView.addSubview(nextButton)
         nextButton.frame = CGRect(x: 700, y: 450, width: 35, height: 45)
         nextButton.setImage(buttonImage, for: .normal)
     }
+    
     
     func setupFaceImageView() {
         questionView.addSubview(faceImageView)
@@ -96,13 +131,6 @@ class MyViewController : UIViewController {
         textLabel.isUserInteractionEnabled = false
     }
     
-    @IBAction func touchedNextButton() {
-        if pageNumber < 3 {
-        pageNumber += 1
-        setupTextLabel(pageNumber: pageNumber)
-        }
-    }
-    
     func setupShadow(_ view: UIView) {
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.6
@@ -111,6 +139,21 @@ class MyViewController : UIViewController {
         view.layer.shadowPath = UIBezierPath(rect: view.bounds).cgPath
         view.layer.shouldRasterize = true
         view.layer.rasterizationScale = UIScreen.main.scale
+    }
+    
+    @IBAction func touchedNextButton() {
+        if pageNumber < 3 {
+            pageNumber += 1
+            setupTextLabel(pageNumber: pageNumber)
+        } else {
+            questionView.isHidden = true
+            backgroundImageView.alpha = 1
+            joaoButton.flash()
+        }
+    }
+    
+    @IBAction func touchedJoaoButton(_ sender:UIButton) {
+        joaoButton.flash()
     }
     
     func setLineSpacing(lineSpacing: Int,text: String) -> NSAttributedString {
@@ -127,38 +170,8 @@ let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
 
-extension UITextView {
-    func typeOn() {
-        let characterArray = self.text!.characterArray
-        var characterIndex = 0
-        self.text! = ""
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (timer) in
-            while characterArray[characterIndex] == " " {
-                self.text!.append(" ")
-                characterIndex += 1
-                if characterIndex == characterArray.count {
-                    timer.invalidate()
-                    return
-                }
-            }
-            self.text!.append(characterArray[characterIndex])
-            characterIndex += 1
-            if characterIndex == characterArray.count {
-                timer.invalidate()
-            }
-        }
-    }
-}
 
-extension String {
-    var characterArray: [Character]{
-        var characterArray = [Character]()
-        for character in self {
-            characterArray.append(character)
-        }
-        return characterArray
-    }
-}
+
 
 
 
