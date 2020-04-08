@@ -8,9 +8,11 @@ CTFontManagerRegisterFontsForURL(cfURL1, CTFontManagerScope.process, nil)
 let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
 CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
+let answers = [(false, true, false)]
+var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
-    var pageNumber = 3
+    var pageNumber = 0
     var questionNumber = 0
     let texts = Texts()
     
@@ -22,6 +24,9 @@ class MyViewController : UIViewController {
     //UIButton
     let nextButton = UIButton()
     let joaoButton = UIButton()
+    let firstQuestionButton = UIButton()
+    let secondQuestionButton = UIButton()
+    let thirdQuestionButton = UIButton()
     
     //UIImage
     let buttonImage: UIImage = UIImage(named: "next.png")!
@@ -51,13 +56,9 @@ class MyViewController : UIViewController {
     override func viewDidLoad() {
         nextButton.addTarget(self, action: #selector(MyViewController.touchedNextButton), for: .touchUpInside)
         joaoButton.addTarget(self, action: #selector(MyViewController.touchedJoaoButton), for: .touchUpInside)
-
-        for family in UIFont.familyNames {
-            print("\(family)")
-            for name in UIFont.fontNames(forFamilyName: family) {
-                print("   \(name)")
-            }
-        }
+        firstQuestionButton.addTarget(self, action: #selector(MyViewController.touchedFirstQuestionButton), for: .touchUpInside)
+        secondQuestionButton.addTarget(self, action: #selector(MyViewController.touchedSecondQuestionButton), for: .touchUpInside)
+        thirdQuestionButton.addTarget(self, action: #selector(MyViewController.touchedThirdQuestionButton), for: .touchUpInside)
     }
     
     //MARK: Setups
@@ -77,6 +78,28 @@ class MyViewController : UIViewController {
         view.addSubview(joaoButton)
         joaoButton.frame = CGRect(x: 124, y: 354, width: 34, height: 34)
         joaoButton.setImage(UIImage(named:"elipseBlue.png"), for: .normal)
+    }
+    
+    func setupFirstQuestionButton() {
+        questionView.addSubview(firstQuestionButton)
+        firstQuestionButton.frame = CGRect(x: 58, y: 163, width: 628, height: 73)
+        firstQuestionButton.layer.cornerRadius = 12
+        firstQuestionButton.backgroundColor = .white
+    }
+    
+    func setupSecondQuestionButton() {
+        questionView.addSubview(secondQuestionButton)
+        secondQuestionButton.frame = CGRect(x: 58, y: 258, width: 628, height: 73)
+        secondQuestionButton.layer.cornerRadius = 12
+        secondQuestionButton.backgroundColor = .white
+        //secondQuestionButton.showsTouchWhenHighlighted = true
+    }
+    
+    func setupThirdQuestionButton() {
+        questionView.addSubview(thirdQuestionButton)
+        thirdQuestionButton.frame = CGRect(x: 58, y: 352, width: 628, height: 73)
+        thirdQuestionButton.layer.cornerRadius = 12
+        thirdQuestionButton.backgroundColor = .white
     }
     
     
@@ -176,6 +199,25 @@ class MyViewController : UIViewController {
         view.layer.rasterizationScale = UIScreen.main.scale
     }
     
+    func setLineSpacing(lineSpacing: Int,text: String) -> NSAttributedString {
+        let attributedString = NSMutableAttributedString(string: text)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = CGFloat(lineSpacing)
+        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
+        return attributedString
+    }
+    
+    func showQuestionView() {
+        setupQuestionView()
+        setupThiefImageView()
+        setupQuestionLabel()
+        questionView.addSubview(lockImageView)
+        questionView.addSubview(cloudImageView)
+        setupFirstQuestionButton()
+        setupSecondQuestionButton()
+        setupThirdQuestionButton()
+    }
+    
     @IBAction func touchedNextButton() {
         if pageNumber < 3 {
             pageNumber += 1
@@ -188,22 +230,76 @@ class MyViewController : UIViewController {
     }
     
     @IBAction func touchedJoaoButton(_ sender:UIButton) {
-        setupQuestionView()
-        setupThiefImageView()
-        setupQuestionLabel()
-        questionView.addSubview(lockImageView)
-        questionView.addSubview(cloudImageView)
+        showQuestionView()
         joaoButton.isHidden = true
     }
     
-    func setLineSpacing(lineSpacing: Int,text: String) -> NSAttributedString {
-        let attributedString = NSMutableAttributedString(string: text)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = CGFloat(lineSpacing)
-        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
-        return attributedString
+    func areAllQuestionButtonsWhite() -> Bool {
+        if buttonStateAuxiliar.0 == 0 && buttonStateAuxiliar.1 == 0 && buttonStateAuxiliar.2 == 0 {
+            return true
+        }
+        return false
     }
     
+    @IBAction func touchedFirstQuestionButton() {
+        if areAllQuestionButtonsWhite() {
+            buttonStateAuxiliar.0 = 1
+            firstQuestionButton.backgroundColor = .gray
+        } else if buttonStateAuxiliar.0 != 1 {
+            buttonStateAuxiliar.1 = 0; buttonStateAuxiliar.2 = 0
+            secondQuestionButton.backgroundColor = .white; thirdQuestionButton.backgroundColor = .white
+            buttonStateAuxiliar.0 = 1
+            firstQuestionButton.backgroundColor = .gray
+        } else {
+            secondQuestionButton.isUserInteractionEnabled = false
+            thirdQuestionButton.isUserInteractionEnabled = false
+            if answers[0].0 == true {
+                firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+            } else {
+                firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            }
+        }
+    }
+    
+    @IBAction func touchedSecondQuestionButton() {
+        if areAllQuestionButtonsWhite() {
+            buttonStateAuxiliar.1 = 1
+            secondQuestionButton.backgroundColor = .gray
+        } else if buttonStateAuxiliar.1 != 1 {
+            buttonStateAuxiliar.0 = 0; buttonStateAuxiliar.2 = 0
+            firstQuestionButton.backgroundColor = .white; thirdQuestionButton.backgroundColor = .white
+            buttonStateAuxiliar.1 = 1
+            secondQuestionButton.backgroundColor = .gray
+        } else {
+            firstQuestionButton.isUserInteractionEnabled = false
+            thirdQuestionButton.isUserInteractionEnabled = false
+            if answers[0].1 == true {
+                secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+            } else {
+                secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            }
+        }
+    }
+    
+    @IBAction func touchedThirdQuestionButton() {
+        if areAllQuestionButtonsWhite() {
+            buttonStateAuxiliar.2 = 1
+            thirdQuestionButton.backgroundColor = .gray
+        } else if buttonStateAuxiliar.2 != 1 {
+            buttonStateAuxiliar.0 = 0; buttonStateAuxiliar.1 = 0
+            firstQuestionButton.backgroundColor = .white; secondQuestionButton.backgroundColor = .white
+            buttonStateAuxiliar.2 = 1
+            thirdQuestionButton.backgroundColor = .gray
+        } else {
+            firstQuestionButton.isUserInteractionEnabled = false
+            thirdQuestionButton.isUserInteractionEnabled = false
+            if answers[0].2 == true {
+                thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+            } else {
+                thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            }
+        }
+    }
 }
 
 let mvc = MyViewController()
