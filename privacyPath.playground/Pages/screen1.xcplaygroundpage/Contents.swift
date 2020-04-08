@@ -3,18 +3,20 @@
 import UIKit
 import PlaygroundSupport
 
+let cfURL1 = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
+CTFontManagerRegisterFontsForURL(cfURL1, CTFontManagerScope.process, nil)
+let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
+CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
-let cfURL = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
-CTFontManagerRegisterFontsForURL(cfURL, CTFontManagerScope.process, nil)
-
-let presentetionTexts = ["Opa! Me chamo João e acredito que você possa me ajudar. (;\nEu estava andando em um parque e acabei me perdendo.\nEu até estou usando meu celular para encontrar o caminho de casa, mas tem alguém me perseguindo...", "Pelo o que eu consegui perceber, quem está me perseguindo quer roubar todos os meus dados. \nEu estou assustado porque não quero minhas informações com um desconhecido...", "Preciso que você me ajude a despitá-lo!\nEu tenho que aumentar meu nível de segurança para conseguir fugir. Para isso, você precisa responder algumas perguntas...", "Mas cuidado! 3 respostas erradas significam a perda de todos os meus dados.\nPronto para me ajudar?"]
 
 class MyViewController : UIViewController {
-    var pageNumber = 0
-    
+    var pageNumber = 3
+    var questionNumber = 0
+    let texts = Texts()
     
     //****UIs****
     //UIView
+    let historyView = UIView()
     let questionView = UIView()
     
     //UIButton
@@ -30,6 +32,10 @@ class MyViewController : UIViewController {
     let lockImageView = UIImageView()
     let cloudImageView = UIImageView()
     let elipseBlueImageView = UIImageView()
+    let thiefImageView = UIImageView()
+    
+    //UILabel
+    let questionLabel = UILabel()
     
     //UITextView
     let textLabel = UITextView()
@@ -45,15 +51,21 @@ class MyViewController : UIViewController {
     override func viewDidLoad() {
         nextButton.addTarget(self, action: #selector(MyViewController.touchedNextButton), for: .touchUpInside)
         joaoButton.addTarget(self, action: #selector(MyViewController.touchedJoaoButton), for: .touchUpInside)
-        joaoButton.flash()
+
+        for family in UIFont.familyNames {
+            print("\(family)")
+            for name in UIFont.fontNames(forFamilyName: family) {
+                print("   \(name)")
+            }
+        }
     }
     
     //MARK: Setups
     func setupViews() {
         setupBackgroundImageView()
-         //setupElipseBlueImageView()
+        //setupElipseBlueImageView()
         setupJoaoButton()
-        setupQuestionView()
+        setupHistoryView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
@@ -83,6 +95,15 @@ class MyViewController : UIViewController {
         setupShadow(questionView)
     }
     
+    func setupHistoryView() {
+        view.addSubview(historyView)
+        historyView.frame = CGRect(x: 12, y: 51, width: 744, height: 498)
+        historyView.translatesAutoresizingMaskIntoConstraints = false
+        historyView.layer.cornerRadius = 12
+        historyView.backgroundColor = #colorLiteral(red: 0.8941176471, green: 0.9411764706, blue: 0.9647058824, alpha: 1) //#E4F0F6
+        setupShadow(historyView)
+    }
+    
     func setupBackgroundImageView() {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
@@ -91,21 +112,27 @@ class MyViewController : UIViewController {
     }
     
     func setupNextButton() {
-        questionView.addSubview(nextButton)
+        historyView.addSubview(nextButton)
         nextButton.frame = CGRect(x: 700, y: 450, width: 35, height: 45)
         nextButton.setImage(buttonImage, for: .normal)
     }
     
     
     func setupFaceImageView() {
-        questionView.addSubview(faceImageView)
+        historyView.addSubview(faceImageView)
         faceImageView.frame = CGRect(x: 44, y: 22, width: 75, height: 75)
-        questionView.translatesAutoresizingMaskIntoConstraints = false
+        historyView.translatesAutoresizingMaskIntoConstraints = false
         faceImageView.image = UIImage(named: "faceJoao.png")
     }
     
+    func setupThiefImageView() {
+        questionView.addSubview(thiefImageView)
+        thiefImageView.frame = CGRect(x: 44, y: 22, width: 75, height: 75)
+        thiefImageView.image = UIImage(named: "thief.png")
+    }
+    
     func setupLockImageView() {
-        questionView.addSubview(lockImageView)
+        historyView.addSubview(lockImageView)
         lockImageView.frame = CGRect(x: 650, y: 36, width: 68, height: 68)
         lockImageView.transform = CGAffineTransform(rotationAngle: 125.5)
         lockImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -113,7 +140,7 @@ class MyViewController : UIViewController {
     }
     
     func setupCloudImageView(){
-        questionView.addSubview(cloudImageView)
+        historyView.addSubview(cloudImageView)
         cloudImageView.translatesAutoresizingMaskIntoConstraints = false
         cloudImageView.frame = CGRect(x: 15, y: 370, width: 97, height: 97)
         cloudImageView.transform = CGAffineTransform(rotationAngle: 24.8)
@@ -121,14 +148,22 @@ class MyViewController : UIViewController {
     }
     
     func setupTextLabel(pageNumber: Int) {
-        questionView.addSubview(textLabel)
+        historyView.addSubview(textLabel)
         textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 400)
-        //textLabel.numberOfLines = 0
-        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: presentetionTexts[pageNumber])
+        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: texts.presentetionTexts[pageNumber])
         textLabel.typeOn()
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
-        textLabel.backgroundColor = questionView.backgroundColor
+        textLabel.backgroundColor = historyView.backgroundColor
         textLabel.isUserInteractionEnabled = false
+    }
+    
+    func setupQuestionLabel() {
+        questionView.addSubview(questionLabel)
+        questionLabel.frame = CGRect(x: 132, y: 22, width: 504, height: 110)
+        questionLabel.numberOfLines = 0
+        questionLabel.font = UIFont(name:"BalooThambi2-Bold", size: 20)
+        questionLabel.text = texts.questionTexts[questionNumber]
+        questionLabel.textAlignment = .center
     }
     
     func setupShadow(_ view: UIView) {
@@ -146,14 +181,19 @@ class MyViewController : UIViewController {
             pageNumber += 1
             setupTextLabel(pageNumber: pageNumber)
         } else {
-            questionView.isHidden = true
+            historyView.isHidden = true
             backgroundImageView.alpha = 1
             joaoButton.flash()
         }
     }
     
     @IBAction func touchedJoaoButton(_ sender:UIButton) {
-        joaoButton.flash()
+        setupQuestionView()
+        setupThiefImageView()
+        setupQuestionLabel()
+        questionView.addSubview(lockImageView)
+        questionView.addSubview(cloudImageView)
+        joaoButton.isHidden = true
     }
     
     func setLineSpacing(lineSpacing: Int,text: String) -> NSAttributedString {
@@ -169,9 +209,3 @@ class MyViewController : UIViewController {
 let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
-
-
-
-
-
-
