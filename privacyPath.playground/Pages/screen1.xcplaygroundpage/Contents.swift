@@ -12,9 +12,10 @@ let answers = [(false, true, false)]
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
-    var pageNumber = 3
+    var pageNumber = 0
     var questionNumber = 0
     var progressBarNumber = 0.94
+    var lostDataNumber = 0
     let texts = Texts()
     
     //****UIs****
@@ -41,9 +42,14 @@ class MyViewController : UIViewController {
     let elipseBlueImageView = UIImageView()
     let thiefImageView = UIImageView()
     let faceJoaoImageView = UIImageView()
+    let fisrtCircleDataImageView = UIImageView()
+    let secondCircleDataImageView = UIImageView()
+    let thirdCircleDataImageView = UIImageView()
     
     //UILabel
     let questionLabel = UILabel()
+    let lostDataLabel = UILabel()
+    let securityLabel = UILabel()
     
     //UITextView
     let textLabel = UITextView()
@@ -82,7 +88,13 @@ class MyViewController : UIViewController {
         setupBackgroundImageView()
         setupJoaoButton()
         setupProgressView()
-        //setupHistoryView()
+        setupJoao()
+        setupSecurityLabel()
+        setupLostDataLabel()
+        setupCirclesDataImageView(view: fisrtCircleDataImageView, x: 370, y: 37)
+        setupCirclesDataImageView(view: secondCircleDataImageView, x: 420, y: 37)
+        setupCirclesDataImageView(view: thirdCircleDataImageView, x: 470, y: 37)
+        setupHistoryView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
@@ -90,7 +102,12 @@ class MyViewController : UIViewController {
         setupNextButton()
     }
     
-    func setupJoao
+    func setupJoao() {
+        view.addSubview(faceJoaoImageView)
+        faceJoaoImageView.frame = CGRect(x:55, y:12, width: 60, height: 60)
+        faceJoaoImageView.image = UIImage(named: "faceJoao.png")
+    }
+    
     
     @objc func touchedPlusButton() {
         progressBarNumber -= 0.06
@@ -172,7 +189,7 @@ class MyViewController : UIViewController {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
         backgroundImageView.image = UIImage(named: "background.png")
-        //backgroundImageView.alpha = 0.8
+        backgroundImageView.alpha = 0.8
     }
     
     func setupNextButton() {
@@ -218,6 +235,28 @@ class MyViewController : UIViewController {
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
         textLabel.backgroundColor = historyView.backgroundColor
         textLabel.isUserInteractionEnabled = false
+    }
+    
+    func setupLostDataLabel() {
+        view.addSubview(lostDataLabel)
+        lostDataLabel.frame = CGRect(x: 370, y: 5, width: 220, height: 40)
+        lostDataLabel.numberOfLines = 1
+        lostDataLabel.font = UIFont(name:"BalooThambi2-Bold", size: 18)
+        lostDataLabel.text = "Dados perdidos"
+    }
+    
+    func setupSecurityLabel() {
+        view.addSubview(securityLabel)
+        securityLabel.frame = CGRect(x: 120, y: 5, width: 220, height: 40)
+        securityLabel.numberOfLines = 1
+        securityLabel.font = UIFont(name:"BalooThambi2-Bold", size: 18)
+        securityLabel.text = "Segurança"
+    }
+    
+    func setupCirclesDataImageView(view myImageView: UIImageView, x: Int, y: Int) {
+        view.addSubview(myImageView)
+        myImageView.frame = CGRect(x: x, y: y, width: 26, height: 26)
+        myImageView.image = UIImage(named: "circleData.png")
     }
     
     func setupQuestionLabel() {
@@ -303,7 +342,6 @@ class MyViewController : UIViewController {
     
     @IBAction func touchedSecondQuestionButton() {
         if areAllQuestionButtonsWhite() {
-            let numberOne = 1
             buttonStateAuxiliar.1 = 1
             secondQuestionButton.backgroundColor = .gray
         } else if buttonStateAuxiliar.1 != 1 {
