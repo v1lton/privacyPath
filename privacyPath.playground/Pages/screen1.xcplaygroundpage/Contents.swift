@@ -12,8 +12,9 @@ let answers = [(false, true, false)]
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
-    var pageNumber = 0
+    var pageNumber = 3
     var questionNumber = 0
+    var progressBarNumber = 0.94
     let texts = Texts()
     
     //****UIs****
@@ -27,6 +28,7 @@ class MyViewController : UIViewController {
     let firstQuestionButton = UIButton()
     let secondQuestionButton = UIButton()
     let thirdQuestionButton = UIButton()
+    let plusButton = UIButton()
     
     //UIImage
     let buttonImage: UIImage = UIImage(named: "next.png")!
@@ -38,12 +40,19 @@ class MyViewController : UIViewController {
     let cloudImageView = UIImageView()
     let elipseBlueImageView = UIImageView()
     let thiefImageView = UIImageView()
+    let faceJoaoImageView = UIImageView()
     
     //UILabel
     let questionLabel = UILabel()
     
     //UITextView
     let textLabel = UITextView()
+    
+    //UIProgressView
+    let progressView = UIProgressView()
+    
+    //UITapGestureRecognizer
+    let tap = UITapGestureRecognizer()
     
     
     override func loadView() {
@@ -59,14 +68,21 @@ class MyViewController : UIViewController {
         firstQuestionButton.addTarget(self, action: #selector(MyViewController.touchedFirstQuestionButton), for: .touchUpInside)
         secondQuestionButton.addTarget(self, action: #selector(MyViewController.touchedSecondQuestionButton), for: .touchUpInside)
         thirdQuestionButton.addTarget(self, action: #selector(MyViewController.touchedThirdQuestionButton), for: .touchUpInside)
+        plusButton.addTarget(self, action:#selector(MyViewController.touchedPlusButton), for: .touchUpInside)
+        view.addGestureRecognizer(tap)
+        tap.addTarget(self, action: #selector(MyViewController.handleTap))
+    }
+    
+    @objc func handleTap() {
+        print(tap.location(in: view))
     }
     
     //MARK: Setups
     func setupViews() {
         setupBackgroundImageView()
-        //setupElipseBlueImageView()
         setupJoaoButton()
-        setupHistoryView()
+        setupProgressView()
+        //setupHistoryView()
         setupFaceImageView()
         setupLockImageView()
         setupCloudImageView()
@@ -74,10 +90,35 @@ class MyViewController : UIViewController {
         setupNextButton()
     }
     
+    func setupJoao
+    
+    @objc func touchedPlusButton() {
+        progressBarNumber -= 0.06
+        progressView.setProgress(Float(progressBarNumber), animated: true)
+    }
+    
+    func setupPlusButton() {
+        view.addSubview(plusButton)
+        plusButton.backgroundColor = .red
+        plusButton.frame = CGRect(x: 58, y: 163, width: 628, height: 73)
+    }
+    
+    func setupProgressView() {
+        view.addSubview(progressView)
+        progressView.frame = CGRect(x: 118, y: 50, width: 207, height: 1200)
+        let gradientView = GradientView(frame: progressView.bounds)
+        progressView.trackImage = UIImage(view: gradientView)
+        progressView.transform = CGAffineTransform(scaleX: -1.0, y: 13)
+        progressView.layer.cornerRadius = 12
+        progressView.progressTintColor = #colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3019607843, alpha: 1) //#4D4D4D
+        progressView.progress = 1
+        progressView.setProgress(Float(progressBarNumber), animated: false)
+    }
+    
     func setupJoaoButton() {
         view.addSubview(joaoButton)
-        joaoButton.frame = CGRect(x: 124, y: 354, width: 34, height: 34)
-        joaoButton.setImage(UIImage(named:"elipseBlue.png"), for: .normal)
+        joaoButton.frame = CGRect(x: 128.5, y: 357, width: 28, height: 28)
+        joaoButton.setImage(UIImage(named:"dotJoao.png"), for: .normal)
     }
     
     func setupFirstQuestionButton() {
@@ -85,6 +126,8 @@ class MyViewController : UIViewController {
         firstQuestionButton.frame = CGRect(x: 58, y: 163, width: 628, height: 73)
         firstQuestionButton.layer.cornerRadius = 12
         firstQuestionButton.backgroundColor = .white
+        firstQuestionButton.setTitle(texts.firstQuestionButtonTexts[questionNumber], for: .normal)
+        firstQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal) //#2529A
     }
     
     func setupSecondQuestionButton() {
@@ -92,7 +135,9 @@ class MyViewController : UIViewController {
         secondQuestionButton.frame = CGRect(x: 58, y: 258, width: 628, height: 73)
         secondQuestionButton.layer.cornerRadius = 12
         secondQuestionButton.backgroundColor = .white
-        //secondQuestionButton.showsTouchWhenHighlighted = true
+        secondQuestionButton.setTitle(texts.secondQuestionButtonTexts[questionNumber], for: .normal)
+        secondQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal)
+        secondQuestionButton.setTitleColor(.white, for: .selected)
     }
     
     func setupThirdQuestionButton() {
@@ -100,13 +145,9 @@ class MyViewController : UIViewController {
         thirdQuestionButton.frame = CGRect(x: 58, y: 352, width: 628, height: 73)
         thirdQuestionButton.layer.cornerRadius = 12
         thirdQuestionButton.backgroundColor = .white
-    }
-    
-    
-    func setupElipseBlueImageView() {
-        view.addSubview(elipseBlueImageView)
-        elipseBlueImageView.frame = CGRect(x: 124, y: 354, width: 34, height: 34)
-        elipseBlueImageView.image = UIImage(named: "elipseBlue.png")
+        thirdQuestionButton.setTitle(texts.thirdQuestionButtonTexts[questionNumber], for: .normal)
+        thirdQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal)
+        thirdQuestionButton.setTitleColor(.white, for: .selected)
     }
     
     func setupQuestionView() {
@@ -131,7 +172,7 @@ class MyViewController : UIViewController {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
         backgroundImageView.image = UIImage(named: "background.png")
-        backgroundImageView.alpha = 0.8
+        //backgroundImageView.alpha = 0.8
     }
     
     func setupNextButton() {
@@ -139,7 +180,6 @@ class MyViewController : UIViewController {
         nextButton.frame = CGRect(x: 700, y: 450, width: 35, height: 45)
         nextButton.setImage(buttonImage, for: .normal)
     }
-    
     
     func setupFaceImageView() {
         historyView.addSubview(faceImageView)
@@ -263,6 +303,7 @@ class MyViewController : UIViewController {
     
     @IBAction func touchedSecondQuestionButton() {
         if areAllQuestionButtonsWhite() {
+            let numberOne = 1
             buttonStateAuxiliar.1 = 1
             secondQuestionButton.backgroundColor = .gray
         } else if buttonStateAuxiliar.1 != 1 {
@@ -278,6 +319,9 @@ class MyViewController : UIViewController {
             } else {
                 secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.questionView.isHidden = true
+            }
         }
     }
     
@@ -291,12 +335,19 @@ class MyViewController : UIViewController {
             buttonStateAuxiliar.2 = 1
             thirdQuestionButton.backgroundColor = .gray
         } else {
-            firstQuestionButton.isUserInteractionEnabled = false
-            thirdQuestionButton.isUserInteractionEnabled = false
+            firstQuestionButton.isHidden = true
+            secondQuestionButton.isHidden = true
+            animate()
+        }
+    }
+    
+    func animate() {
+        UIView.animate(withDuration: 1.0) {
+            self.thirdQuestionButton.frame = CGRect(x: self.thirdQuestionButton.frame.origin.x, y: 258, width: self.thirdQuestionButton.frame.size.width, height: self.thirdQuestionButton.frame.size.height)
             if answers[0].2 == true {
-                thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+                self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
             } else {
-                thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+                self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
             }
         }
     }
@@ -305,3 +356,42 @@ class MyViewController : UIViewController {
 let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
+
+extension UIImage{
+    convenience init(view: UIView) {
+
+        UIGraphicsBeginImageContext(view.frame.size)
+        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.init(cgImage: (image?.cgImage)!)
+
+    }
+}
+
+@IBDesignable
+class GradientView: UIView {
+
+    private var gradientLayer = CAGradientLayer()
+    private var vertical: Bool = false
+
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        // Drawing code
+
+        //fill view with gradient layer
+        gradientLayer.frame = self.bounds
+
+        //style and insert layer if not already inserted
+        if gradientLayer.superlayer == nil {
+
+            gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+            gradientLayer.endPoint = vertical ? CGPoint(x: 0, y: 1) : CGPoint(x: 1, y: 0)
+            gradientLayer.colors = [#colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1).cgColor, #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1).cgColor]
+            gradientLayer.locations = [0.0, 1.0]
+
+            self.layer.insertSublayer(gradientLayer, at: 0)
+        }
+    }
+
+}

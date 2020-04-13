@@ -5,5 +5,11 @@ public class Texts {
     
     public let questionTexts = ["Você é convidado a participar de um quiz \"Saiba quem você é no BBB\". Como esse quiz pode colocá-lo em risco ?"]
     
+    public let firstQuestionButtonTexts = ["Você pode ficar enfurecido com o resultado e espalhar seus dados pela internet"]
+    
+    public let secondQuestionButtonTexts = ["O criador do quiz pode enviar as suas respostas para terceiros, como redes sociais e anunciantes"]
+    
+    public let thirdQuestionButtonTexts = ["Na verdade, esse tipo de quiz não oferece nenhum risco aos meus dados"]
+    
     public init() {}
 }
