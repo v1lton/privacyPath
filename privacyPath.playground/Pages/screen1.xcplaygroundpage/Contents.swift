@@ -318,7 +318,6 @@ class MyViewController : UIViewController {
                 firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
             }
             confirmButton.isHidden = false
-            questionNumber += 1
         }
     }
     @IBAction func touchedSecondQuestionButton() {
@@ -341,7 +340,6 @@ class MyViewController : UIViewController {
                 secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
             }
             confirmButton.isHidden = false
-            questionNumber += 1
         }
     }
     
@@ -355,17 +353,27 @@ class MyViewController : UIViewController {
             buttonStateAuxiliar.2 = 1
             thirdQuestionButton.backgroundColor = .gray
         } else {
-            firstQuestionButton.isHidden = true
-            secondQuestionButton.isHidden = true
-            animate()
-            questionNumber += 1
+            firstQuestionButton.isUserInteractionEnabled = false
+            secondQuestionButton.isUserInteractionEnabled = false
+            if answers[0].2 == true {
+                isAnswerCorrect = true
+                thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+            } else {
+                isAnswerCorrect = false
+                thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            }
+            confirmButton.isHidden = false
         }
     }
     
     @IBAction func touchedConfirmButton() {
+        questionNumber += 1
         questionView.isHidden = true
         characterButton.unflash()
         characterButton.isHidden = false
+        setButtonStateAuxiliarValuesToZero()
+        updateQuestionViewLabels()
+        updateQuestionViewButtons()
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             UIView.animate(withDuration: 1.0) {
                 if self.isAnswerCorrect {
@@ -377,6 +385,26 @@ class MyViewController : UIViewController {
     }
     
     //MARK: Auxiliar Functions
+    func setButtonStateAuxiliarValuesToZero() {
+        buttonStateAuxiliar.0 = 0
+        buttonStateAuxiliar.1 = 0
+        buttonStateAuxiliar.2 = 0
+    }
+    
+    func updateQuestionViewLabels() {
+        questionLabel.text = texts.questionTexts[questionNumber]
+    }
+    
+    func updateQuestionViewButtons() {
+        setupFirstQuestionButton()
+        setupSecondQuestionButton()
+        setupThirdQuestionButton()
+        firstQuestionButton.isUserInteractionEnabled = true
+        secondQuestionButton.isUserInteractionEnabled = true
+        thirdQuestionButton.isUserInteractionEnabled = true
+        confirmButton.isHidden = true
+    }
+    
     func showQuestionView() {
         questionView.isHidden = false
         questionView.addSubview(lockImageView)
@@ -414,6 +442,7 @@ class MyViewController : UIViewController {
             if answers[0].2 == true {
                 self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
             } else {
+                self.isAnswerCorrect = false
                 self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
             }
             self.confirmButton.isHidden = false
