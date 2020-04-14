@@ -12,4 +12,8 @@ public extension UIButton {
         flash.repeatCount = 1000
         layer.add(flash, forKey: nil)
     }
+    
+    func unflash() {
+        layer.removeAllAnimations()
+    }
 }
