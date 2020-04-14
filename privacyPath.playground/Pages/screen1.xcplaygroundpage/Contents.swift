@@ -10,11 +10,13 @@ CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
 let answers = [(false, true, false)]
 let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
+let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8), (x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
     var pageNumber = 3
     var questionNumber = 0
+    var thiefDotPosition = 0
     var progressBarNumber = 0.94
     var lostDataNumber = 0
     var isAnswerCorrect = true
@@ -47,6 +49,7 @@ class MyViewController : UIViewController {
     let fisrtCircleDataImageView = UIImageView()
     let secondCircleDataImageView = UIImageView()
     let thirdCircleDataImageView = UIImageView()
+    let thiefDotImageView = UIImageView()
     
     //UILabel
     let questionLabel = UILabel()
@@ -199,6 +202,7 @@ class MyViewController : UIViewController {
     func setupSubviewsOfView() {
         setupBackgroundImageView()
         setupCharacterButton()
+        setupThiefDotImageView()
         setupProgressView()
         setupCharacterFaceImageView()
         setupSecurityLabel()
@@ -222,6 +226,12 @@ class MyViewController : UIViewController {
         characterButton.frame = CGRect(x: characterCoordinates[questionNumber].x, y: characterCoordinates[questionNumber].y, width: 28, height: 28)
         characterButton.setImage(UIImage(named:"dotJoao.png"), for: .normal)
         characterButton.isUserInteractionEnabled = true
+    }
+    
+    func setupThiefDotImageView() {
+        view.addSubview(thiefDotImageView)
+        thiefDotImageView.frame = CGRect(x: thiefCoordinates[thiefDotPosition].x, y: thiefCoordinates[thiefDotPosition].y, width: 28, height: 28)
+        thiefDotImageView.image = UIImage(named: "dotThief.png")
     }
     
     func setupProgressView() {
@@ -267,7 +277,6 @@ class MyViewController : UIViewController {
     func setupHistoryView() {
         view.addSubview(historyView)
         historyView.frame = CGRect(x: 12, y: 51, width: 744, height: 498)
-        historyView.translatesAutoresizingMaskIntoConstraints = false
         historyView.layer.cornerRadius = 12
         historyView.backgroundColor = #colorLiteral(red: 0.8941176471, green: 0.9411764706, blue: 0.9647058824, alpha: 1) //#E4F0F6
         setupShadow(historyView)
@@ -276,7 +285,6 @@ class MyViewController : UIViewController {
     func setupQuestionView() {
         view.addSubview(questionView)
         questionView.frame = CGRect(x: 12, y: 51, width: 744, height: 498)
-        questionView.translatesAutoresizingMaskIntoConstraints = false
         questionView.layer.cornerRadius = 12
         questionView.backgroundColor = #colorLiteral(red: 0.8941176471, green: 0.9411764706, blue: 0.9647058824, alpha: 1) //#E4F0F6
         setupShadow(questionView)
@@ -326,6 +334,7 @@ class MyViewController : UIViewController {
             confirmButton.isHidden = false
         }
     }
+    
     @IBAction func touchedSecondQuestionButton() {
         if areAllQuestionButtonsWhite() {
             buttonStateAuxiliar.1 = 1
@@ -381,6 +390,7 @@ class MyViewController : UIViewController {
         updateQuestionViewLabels()
         updateQuestionViewButtons()
         animateCharacterButton()
+        animateThiefDotImageView()
         if isAnswerCorrect {
             animateProgressionBar()
         } else {
@@ -392,6 +402,23 @@ class MyViewController : UIViewController {
     }
     
     //MARK: Auxiliar Functions
+    func animateThiefDotImageView() {
+        if isAnswerCorrect {
+            thiefDotAnimation(howManyTimes: 1)
+        } else {
+            thiefDotAnimation(howManyTimes: 2)
+        }
+    }
+    
+    func thiefDotAnimation (howManyTimes: Int) {
+        for _ in 1...howManyTimes {
+            thiefDotPosition += 1
+            UIView.animate(withDuration: TimeInterval(howManyTimes)) {
+                self.thiefDotImageView.frame = CGRect(x: thiefCoordinates[self.thiefDotPosition].x, y: thiefCoordinates[self.thiefDotPosition].y, width: Double(self.thiefDotImageView.frame.size.width), height: Double(self.thiefDotImageView.frame.size.height))
+            }
+        }
+    }
+    
     func animateLostData() {
         if lostDataNumber == 0 {
             UIView.transition(with: fisrtCircleDataImageView , duration: 2.0, options: [.transitionFlipFromLeft, .curveEaseOut], animations: {self.fisrtCircleDataImageView.image = UIImage(named: "lostdata.png")})
