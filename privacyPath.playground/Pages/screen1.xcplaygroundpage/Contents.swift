@@ -125,6 +125,9 @@ class MyViewController : UIViewController {
         firstQuestionButton.backgroundColor = .white
         firstQuestionButton.setTitle(texts.firstQuestionButtonTexts[questionNumber], for: .normal)
         firstQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal) //#2529A
+        firstQuestionButton.titleLabel!.numberOfLines = 0
+        firstQuestionButton.titleLabel!.font = UIFont(name: "Montserrat-SemiBold", size: 16)
+        firstQuestionButton.titleLabel!.textAlignment = .center
     }
     
     func setupSecondQuestionButton() {
@@ -134,7 +137,9 @@ class MyViewController : UIViewController {
         secondQuestionButton.backgroundColor = .white
         secondQuestionButton.setTitle(texts.secondQuestionButtonTexts[questionNumber], for: .normal)
         secondQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal)
-        secondQuestionButton.setTitleColor(.white, for: .selected)
+        secondQuestionButton.titleLabel!.numberOfLines = 0
+        secondQuestionButton.titleLabel!.font = UIFont(name: "Montserrat-SemiBold", size: 16)
+        secondQuestionButton.titleLabel!.textAlignment = .center
     }
     
     func setupThirdQuestionButton() {
@@ -145,6 +150,10 @@ class MyViewController : UIViewController {
         thirdQuestionButton.setTitle(texts.thirdQuestionButtonTexts[questionNumber], for: .normal)
         thirdQuestionButton.setTitleColor(#colorLiteral(red: 0.1450980392, green: 0.1607843137, blue: 0.1647058824, alpha: 1), for: .normal)
         thirdQuestionButton.setTitleColor(.white, for: .selected)
+        thirdQuestionButton.titleLabel!.numberOfLines = 0
+        thirdQuestionButton.titleLabel!.font = UIFont(name: "Montserrat-SemiBold", size: 16)
+        thirdQuestionButton.titleLabel!.textAlignment = .center
+
     }
     
     func setupConfirmButton() {
