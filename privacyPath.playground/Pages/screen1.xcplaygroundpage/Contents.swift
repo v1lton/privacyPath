@@ -9,6 +9,7 @@ let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "t
 CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
 let answers = [(false, true, false)]
+let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
@@ -66,9 +67,11 @@ class MyViewController : UIViewController {
         let view = UIView()
         view.backgroundColor = .white
         self.view = view
+        view.isUserInteractionEnabled = true
         setupSubviewsOfView()
         setupSubviewsOfHistoryView()
         setupSubviewsOfQuestionView()
+        backgroundImageView.isUserInteractionEnabled = true
     }
     
     override func viewDidLoad() {
@@ -79,7 +82,9 @@ class MyViewController : UIViewController {
         thirdQuestionButton.addTarget(self, action: #selector(MyViewController.touchedThirdQuestionButton), for: .touchUpInside)
         confirmButton.addTarget(self, action: #selector(MyViewController.touchedConfirmButton), for: .touchUpInside)
         tap.addTarget(self, action: #selector(MyViewController.handleTap))
+        view.addGestureRecognizer(tap)
     }
+    
     
     @objc func handleTap() {
         print(tap.location(in: view))
@@ -209,18 +214,19 @@ class MyViewController : UIViewController {
         view.addSubview(backgroundImageView)
         backgroundImageView.frame = CGRect(x: 0, y: 0, width: 768, height: 600)
         backgroundImageView.image = UIImage(named: "background.png")
-        backgroundImageView.alpha = 0.8
+        //backgroundImageView.alpha = 0.8
     }
     
     func setupCharacterButton() {
         view.addSubview(characterButton)
-        characterButton.frame = CGRect(x: 128.5, y: 357, width: 28, height: 28)
+        characterButton.frame = CGRect(x: characterCoordinates[questionNumber].x, y: characterCoordinates[questionNumber].y, width: 28, height: 28)
         characterButton.setImage(UIImage(named:"dotJoao.png"), for: .normal)
+        characterButton.isUserInteractionEnabled = true
     }
     
     func setupProgressView() {
         view.addSubview(progressView)
-        progressView.frame = CGRect(x: 118, y: 50, width: 207, height: 1200)
+        progressView.frame = CGRect(x: 118, y: 50, width: 160, height: 1200)
         let gradientView = GradientView(frame: progressView.bounds)
         progressView.trackImage = UIImage(view: gradientView)
         progressView.transform = CGAffineTransform(scaleX: -1.0, y: 13)
@@ -369,22 +375,47 @@ class MyViewController : UIViewController {
     @IBAction func touchedConfirmButton() {
         questionNumber += 1
         questionView.isHidden = true
-        characterButton.unflash()
         characterButton.isHidden = false
+        characterButton.unflash()
         setButtonStateAuxiliarValuesToZero()
         updateQuestionViewLabels()
         updateQuestionViewButtons()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            UIView.animate(withDuration: 1.0) {
-                if self.isAnswerCorrect {
-                    self.progressBarNumber -= 0.06
-                    self.progressView.setProgress(Float(self.progressBarNumber), animated: true)
-                }
+        animateCharacterButton()
+        if isAnswerCorrect {
+            animateProgressionBar()
+        } else {
+            animateLostData()
+        }
+        
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        //        }
+    }
+    
+    //MARK: Auxiliar Functions
+    func animateLostData() {
+        if lostDataNumber == 0 {
+            UIView.transition(with: fisrtCircleDataImageView , duration: 2.0, options: [.transitionFlipFromLeft, .curveEaseOut], animations: {self.fisrtCircleDataImageView.image = UIImage(named: "lostdata.png")})
+        } else if lostDataNumber == 1 {
+            UIView.transition(with: secondCircleDataImageView , duration: 2.0, options: [.transitionFlipFromLeft, .curveEaseOut], animations: {self.secondCircleDataImageView.image = UIImage(named: "lostdata.png")})
+        } else {
+            UIView.transition(with: thirdCircleDataImageView , duration: 2.0, options: [.transitionFlipFromLeft, .curveEaseOut], animations: {self.thirdCircleDataImageView.image = UIImage(named: "lostdata.png")})
+        }
+        lostDataNumber += 1
+    }
+    
+    func changeImage(){
+        self.fisrtCircleDataImageView.image = UIImage(named:"lostdata.png")
+    }
+    
+    func animateProgressionBar() {
+        UIView.animate(withDuration: 1.0) {
+            if self.isAnswerCorrect {
+                self.progressBarNumber -= 0.06
+                self.progressView.setProgress(Float(self.progressBarNumber), animated: true)
             }
         }
     }
     
-    //MARK: Auxiliar Functions
     func setButtonStateAuxiliarValuesToZero() {
         buttonStateAuxiliar.0 = 0
         buttonStateAuxiliar.1 = 0
@@ -434,6 +465,12 @@ class MyViewController : UIViewController {
             return true
         }
         return false
+    }
+    
+    func animateCharacterButton() {
+        UIView.animate(withDuration: 1.0) {
+            self.characterButton.frame = CGRect(x: characterCoordinates[self.questionNumber].x, y: characterCoordinates[self.questionNumber].y, width: Double(self.characterButton.frame.size.width), height: Double(self.characterButton.frame.size.height))
+        }
     }
     
     func animate() {
