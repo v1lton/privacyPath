@@ -8,7 +8,7 @@ CTFontManagerRegisterFontsForURL(cfURL1, CTFontManagerScope.process, nil)
 let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
 CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
-let answers = [(false, true, false)]
+let answers = [(false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, false, true), (true, false, false), (false, true, false), (false, false, true), (false, false, true)]
 let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8), (x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 var buttonStateAuxiliar = (0, 0, 0)
@@ -52,7 +52,7 @@ class MyViewController : UIViewController {
     let thiefDotImageView = UIImageView()
     
     //UILabel
-    let questionLabel = UILabel()
+    let questionLabel = UITextView()
     let lostDataLabel = UILabel()
     let securityLabel = UILabel()
     
@@ -111,11 +111,12 @@ class MyViewController : UIViewController {
     
     func setupQuestionLabel() {
         questionView.addSubview(questionLabel)
-        questionLabel.frame = CGRect(x: 132, y: 22, width: 504, height: 110)
-        questionLabel.numberOfLines = 0
+        questionLabel.frame = CGRect(x: 125, y: 15, width: 520, height: 150)
+        questionLabel.isUserInteractionEnabled = false
+        questionLabel.backgroundColor = questionView.backgroundColor
         questionLabel.font = UIFont(name:"BalooThambi2-Bold", size: 20)
         questionLabel.text = texts.questionTexts[questionNumber]
-        questionLabel.textAlignment = .center
+        questionLabel.textAlignment = .justified
     }
     
     func setupFirstQuestionButton() {
@@ -194,7 +195,7 @@ class MyViewController : UIViewController {
     
     func setupTextLabel(pageNumber: Int) {
         historyView.addSubview(textLabel)
-        textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 400)
+        textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 320)
         textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: texts.presentetionTexts[pageNumber])
         textLabel.typeOn()
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
@@ -204,7 +205,7 @@ class MyViewController : UIViewController {
     
     func setupNextButton() {
         historyView.addSubview(nextButton)
-        nextButton.frame = CGRect(x: 700, y: 450, width: 35, height: 45)
+        nextButton.frame = CGRect(x: 370, y: 390, width: 55, height: 55)
         nextButton.setImage(buttonImage, for: .normal)
     }
     
@@ -333,7 +334,7 @@ class MyViewController : UIViewController {
         } else {
             secondQuestionButton.isUserInteractionEnabled = false
             thirdQuestionButton.isUserInteractionEnabled = false
-            if answers[0].0 == true {
+            if answers[questionNumber].0 == true {
                 isAnswerCorrect = true
                 firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
             } else {
@@ -356,7 +357,7 @@ class MyViewController : UIViewController {
         } else {
             firstQuestionButton.isUserInteractionEnabled = false
             thirdQuestionButton.isUserInteractionEnabled = false
-            if answers[0].1 == true {
+            if answers[questionNumber].1 == true {
                 isAnswerCorrect = true
                 secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
             } else {
@@ -379,7 +380,7 @@ class MyViewController : UIViewController {
         } else {
             firstQuestionButton.isUserInteractionEnabled = false
             secondQuestionButton.isUserInteractionEnabled = false
-            if answers[0].2 == true {
+            if answers[questionNumber].2 == true {
                 isAnswerCorrect = true
                 thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
             } else {
