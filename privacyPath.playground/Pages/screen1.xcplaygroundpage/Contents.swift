@@ -17,7 +17,7 @@ class MyViewController : UIViewController {
     var pageNumber = 0
     var questionNumber = 0
     var thiefDotPosition = 0
-    var progressBarNumber = 0.96
+    var progressBarNumber = 0.93
     var lostDataNumber = 0
     var isAnswerCorrect = true
     let texts = Texts()
@@ -34,6 +34,7 @@ class MyViewController : UIViewController {
     let secondQuestionButton = UIButton()
     let thirdQuestionButton = UIButton()
     let confirmButton = UIButton()
+    let closeButton = UIButton()
     
     //UIImageView
     let backgroundImageView = UIImageView()
@@ -62,7 +63,6 @@ class MyViewController : UIViewController {
     //UITapGestureRecognizer
     let tap = UITapGestureRecognizer()
     
-    
     override func loadView() {
         let view = UIView()
         view.backgroundColor = .white
@@ -82,6 +82,7 @@ class MyViewController : UIViewController {
         thirdQuestionButton.addTarget(self, action: #selector(MyViewController.touchedThirdQuestionButton), for: .touchUpInside)
         confirmButton.addTarget(self, action: #selector(MyViewController.touchedConfirmButton), for: .touchUpInside)
         tap.addTarget(self, action: #selector(MyViewController.handleTap))
+        closeButton.addTarget(self, action: #selector(MyViewController.touchedCloseButton), for: .touchUpInside)
         view.addGestureRecognizer(tap)
     }
     
@@ -97,6 +98,7 @@ class MyViewController : UIViewController {
         setupFirstQuestionButton()
         setupSecondQuestionButton()
         setupThirdQuestionButton()
+        setupCloseButton()
         setupConfirmButton()
     }
     
@@ -154,12 +156,28 @@ class MyViewController : UIViewController {
         
     }
     
+    func setupCloseButton() {
+        questionView.addSubview(closeButton)
+        closeButton.frame = CGRect(x: 320, y: 440, width: 110, height: 40)
+        closeButton.setTitle("Fechar", for: .normal)
+        closeButton.layer.cornerRadius = 12
+        closeButton.titleLabel!.font = UIFont(name: "BalooThambi2-Bold", size: 18)
+        closeButton.setTitleShadowColor(.black, for: .normal)
+        closeButton.titleLabel!.textColor = .white
+        closeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8274509804, blue: 0.3647058824, alpha: 1) //#FFD35D
+        closeButton.isHidden = true
+    }
+    
     func setupConfirmButton() {
         questionView.addSubview(confirmButton)
-        confirmButton.frame = CGRect(x: 372, y: 448, width: 90, height: 40)
+        confirmButton.frame = CGRect(x: 320, y: 440, width: 110, height: 40)
         confirmButton.setTitle("Confirmar", for: .normal)
-        confirmButton.backgroundColor = #colorLiteral(red: 1, green: 0.8274509804, blue: 0.3647058824, alpha: 1) //#FFD35D
-        confirmButton.isHidden = true
+        confirmButton.layer.cornerRadius = 12
+        confirmButton.titleLabel!.font = UIFont(name: "BalooThambi2-Bold", size: 18)
+        confirmButton.setTitleShadowColor(.black, for: .normal)
+        confirmButton.titleLabel!.textColor = .white
+        confirmButton.backgroundColor = #colorLiteral(red: 0.768627451, green: 0.768627451, blue: 0.768627451, alpha: 1) //#C4C4C4
+        confirmButton.isEnabled = false
     }
     
     func setupSubviewsOfHistoryView() {
@@ -324,11 +342,16 @@ class MyViewController : UIViewController {
             characterButton.isHidden = true
         } else {
             questionView.isHidden = false
+            confirmButton.isHidden = false
+            confirmButton.isEnabled = false
+            confirmButton.backgroundColor = #colorLiteral(red: 0.768627451, green: 0.768627451, blue: 0.768627451, alpha: 1)
+            closeButton.isHidden = true
         }
     }
     
     @IBAction func touchedFirstQuestionButton() {
         if areAllQuestionButtonsWhite() {
+            enableConfirmButton()
             buttonStateAuxiliar.0 = 1
             firstQuestionButton.backgroundColor = .gray
         } else if buttonStateAuxiliar.0 != 1 {
@@ -336,22 +359,12 @@ class MyViewController : UIViewController {
             secondQuestionButton.backgroundColor = .white; thirdQuestionButton.backgroundColor = .white
             buttonStateAuxiliar.0 = 1
             firstQuestionButton.backgroundColor = .gray
-        } else {
-            secondQuestionButton.isUserInteractionEnabled = false
-            thirdQuestionButton.isUserInteractionEnabled = false
-            if answers[questionNumber].0 == true {
-                isAnswerCorrect = true
-                firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-            } else {
-                isAnswerCorrect = false
-                firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-            }
-            confirmButton.isHidden = false
         }
     }
     
     @IBAction func touchedSecondQuestionButton() {
         if areAllQuestionButtonsWhite() {
+            enableConfirmButton()
             buttonStateAuxiliar.1 = 1
             secondQuestionButton.backgroundColor = .gray
         } else if buttonStateAuxiliar.1 != 1 {
@@ -359,22 +372,12 @@ class MyViewController : UIViewController {
             firstQuestionButton.backgroundColor = .white; thirdQuestionButton.backgroundColor = .white
             buttonStateAuxiliar.1 = 1
             secondQuestionButton.backgroundColor = .gray
-        } else {
-            firstQuestionButton.isUserInteractionEnabled = false
-            thirdQuestionButton.isUserInteractionEnabled = false
-            if answers[questionNumber].1 == true {
-                isAnswerCorrect = true
-                secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-            } else {
-                isAnswerCorrect = false
-                secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-            }
-            confirmButton.isHidden = false
         }
     }
     
     @IBAction func touchedThirdQuestionButton() {
         if areAllQuestionButtonsWhite() {
+            enableConfirmButton()
             buttonStateAuxiliar.2 = 1
             thirdQuestionButton.backgroundColor = .gray
         } else if buttonStateAuxiliar.2 != 1 {
@@ -382,47 +385,125 @@ class MyViewController : UIViewController {
             firstQuestionButton.backgroundColor = .white; secondQuestionButton.backgroundColor = .white
             buttonStateAuxiliar.2 = 1
             thirdQuestionButton.backgroundColor = .gray
-        } else {
-            firstQuestionButton.isUserInteractionEnabled = false
-            secondQuestionButton.isUserInteractionEnabled = false
-            if answers[questionNumber].2 == true {
-                isAnswerCorrect = true
-                thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-            } else {
-                isAnswerCorrect = false
-                thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-            }
-            confirmButton.isHidden = false
         }
     }
     
     @IBAction func touchedConfirmButton() {
+        changeConfirmButtonToCloseButton()
+        disableQuestionButtons()
+        if !areAllQuestionButtonsWhite() {
+            modifyQuestionButtons()
+        }
+    }
+    
+    @IBAction func touchedCloseButton() {
         questionNumber += 1
         questionView.isHidden = true
         characterButton.isHidden = false
+        enableQuestionButtons()
         characterButton.unflash()
         setButtonStateAuxiliarValuesToZero()
         updateQuestionViewLabels()
         updateQuestionViewButtons()
         animateCharacterButton()
-        animateThiefDotImageView()
         if isAnswerCorrect {
             animateProgressionBar()
         } else {
             animateLostData()
         }
-        
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-        //        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.animateThiefDotImageView {
+                self.characterButton.flash(howManyTimes: 100)
+            }
+        }
+    }
+    
+    func enableQuestionButtons() {
+        firstQuestionButton.isEnabled = true
+        secondQuestionButton.isEnabled = true
+        thirdQuestionButton.isEnabled = true
     }
     
     //MARK: Auxiliar Functions
-    func animateThiefDotImageView() {
+    func changeConfirmButtonToCloseButton() {
+           confirmButton.isHidden = true
+           closeButton.isHidden = false
+       }
+       
+       func modifyQuestionButtons() {
+           if buttonStateAuxiliar.0 == 1 {
+               modifyFirstQuestionButton()
+           } else if buttonStateAuxiliar.1 == 1 {
+               modifySecondQuestionButton()
+           } else {
+               modifyThirdQuestionButton()
+           }
+       }
+       
+       func modifyFirstQuestionButton() {
+           if isFirstButtonTrue() {
+               isAnswerCorrect = true
+               firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+           } else {
+               isAnswerCorrect = false
+               firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+               setTrueButtonToGreen()
+           }
+       }
+       
+       func modifySecondQuestionButton() {
+           if isSecondButtonTrue() {
+               isAnswerCorrect = true
+               secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+           } else {
+               isAnswerCorrect = false
+               secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+               setTrueButtonToGreen()
+           }
+       }
+       
+       func modifyThirdQuestionButton() {
+           if isThirdButtonTrue() {
+               isAnswerCorrect = true
+               thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+           } else {
+               isAnswerCorrect = false
+               thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+               setTrueButtonToGreen()
+           }
+       }
+       
+       func setTrueButtonToGreen() {
+           if answers[questionNumber].0 {
+               firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+               firstQuestionButton.shake()
+           } else if answers[questionNumber].1 {
+               secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
+               secondQuestionButton.shake()
+           } else {
+               thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
+               thirdQuestionButton.shake()
+           }
+       }
+       
+       func disableQuestionButtons() {
+           firstQuestionButton.isEnabled = false
+           secondQuestionButton.isEnabled = false
+           thirdQuestionButton.isEnabled = false
+       }
+    
+    func enableConfirmButton() {
+        confirmButton.backgroundColor = #colorLiteral(red: 1, green: 0.8274509804, blue: 0.3647058824, alpha: 1) //#FFD35D
+        confirmButton.isEnabled = true
+    }
+    
+    func animateThiefDotImageView(completion: (() -> Void)? = nil) {
         if isAnswerCorrect {
             thiefDotAnimation(howManyTimes: 1)
         } else {
             thiefDotAnimation(howManyTimes: 2)
         }
+        completion?()
     }
     
     func thiefDotAnimation (howManyTimes: Int) {
@@ -452,7 +533,7 @@ class MyViewController : UIViewController {
     func animateProgressionBar() {
         UIView.animate(withDuration: 1.0) {
             if self.isAnswerCorrect {
-                self.progressBarNumber -= 0.06
+                self.progressBarNumber -= 0.065
                 self.progressView.setProgress(Float(self.progressBarNumber), animated: true)
             }
         }
@@ -482,6 +563,7 @@ class MyViewController : UIViewController {
         questionView.isHidden = false
         questionView.addSubview(lockImageView)
         questionView.addSubview(cloudImageView)
+        setupThirdQuestionButton()
     }
     
     func setupShadow(_ view: UIView) {
@@ -515,17 +597,23 @@ class MyViewController : UIViewController {
         }
     }
     
-    func animate() {
-        UIView.animate(withDuration: 1.0) {
-            self.thirdQuestionButton.frame = CGRect(x: self.thirdQuestionButton.frame.origin.x, y: 258, width: self.thirdQuestionButton.frame.size.width, height: self.thirdQuestionButton.frame.size.height)
-            if answers[0].2 == true {
-                self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-            } else {
-                self.isAnswerCorrect = false
-                self.thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-            }
-            self.confirmButton.isHidden = false
+    func isFirstButtonTrue() -> Bool {
+        if answers[questionNumber].0 == true {
+            return true
         }
+        return false
+    }
+    func isSecondButtonTrue() -> Bool {
+        if answers[questionNumber].1 == true {
+            return true
+        }
+        return false
+    }
+    func isThirdButtonTrue() -> Bool {
+        if answers[questionNumber].2 == true {
+            return true
+        }
+        return false
     }
 }
 
