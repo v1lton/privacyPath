@@ -8,16 +8,16 @@ CTFontManagerRegisterFontsForURL(cfURL1, CTFontManagerScope.process, nil)
 let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
 CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
 
-let answers = [(false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, false, true), (true, false, false), (false, true, false), (false, false, true), (false, false, true)]
+let answers = [(false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (true, false, false), (false, false, true)]
 let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8), (x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
-    var pageNumber = 3
+    var pageNumber = 0
     var questionNumber = 0
     var thiefDotPosition = 0
-    var progressBarNumber = 0.94
+    var progressBarNumber = 0.96
     var lostDataNumber = 0
     var isAnswerCorrect = true
     let texts = Texts()
@@ -34,9 +34,6 @@ class MyViewController : UIViewController {
     let secondQuestionButton = UIButton()
     let thirdQuestionButton = UIButton()
     let confirmButton = UIButton()
-    
-    //UIImage
-    let buttonImage: UIImage = UIImage(named: "next.png")!
     
     //UIImageView
     let backgroundImageView = UIImageView()
@@ -154,7 +151,7 @@ class MyViewController : UIViewController {
         thirdQuestionButton.titleLabel!.numberOfLines = 0
         thirdQuestionButton.titleLabel!.font = UIFont(name: "Montserrat-SemiBold", size: 16)
         thirdQuestionButton.titleLabel!.textAlignment = .center
-
+        
     }
     
     func setupConfirmButton() {
@@ -197,7 +194,12 @@ class MyViewController : UIViewController {
         historyView.addSubview(textLabel)
         textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 320)
         textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: texts.presentetionTexts[pageNumber])
-        textLabel.typeOn()
+        textLabel.typeOn {
+            self.nextButton.isEnabled = true
+            if (pageNumber == 0) {
+                self.nextButton.flash(howManyTimes: 2)
+            }
+        }
         textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
         textLabel.backgroundColor = historyView.backgroundColor
         textLabel.isUserInteractionEnabled = false
@@ -205,8 +207,10 @@ class MyViewController : UIViewController {
     
     func setupNextButton() {
         historyView.addSubview(nextButton)
-        nextButton.frame = CGRect(x: 370, y: 390, width: 55, height: 55)
-        nextButton.setImage(buttonImage, for: .normal)
+        nextButton.frame = CGRect(x: 660, y: 390, width: 55, height: 55)
+        nextButton.setImage(UIImage(named: "next.png"), for: .normal)
+        nextButton.setImage(UIImage(named: "nextInactive.png"), for: .disabled)
+        nextButton.isEnabled = false
     }
     
     func setupSubviewsOfView() {
@@ -303,13 +307,14 @@ class MyViewController : UIViewController {
     
     //MARK: IBActions
     @IBAction func touchedNextButton() {
+        nextButton.isEnabled = false
         if pageNumber < 3 {
             pageNumber += 1
             setupTextLabel(pageNumber: pageNumber)
         } else {
             historyView.isHidden = true
             backgroundImageView.alpha = 1
-            characterButton.flash()
+            characterButton.flash(howManyTimes: 1000)
         }
     }
     

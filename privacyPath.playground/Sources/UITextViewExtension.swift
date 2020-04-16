@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 public extension UITextView {
-    func typeOn() {
+    func typeOn(completion: (() -> Void)? = nil) {
         let characterArray = self.text!.characterArray
         var characterIndex = 0
         self.text! = ""
@@ -19,6 +19,7 @@ public extension UITextView {
             characterIndex += 1
             if characterIndex == characterArray.count {
                 timer.invalidate()
+                completion?()
             }
         }
     }
