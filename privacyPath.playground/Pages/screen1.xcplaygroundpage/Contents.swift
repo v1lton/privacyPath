@@ -14,10 +14,10 @@ let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8
 var buttonStateAuxiliar = (0, 0, 0)
 
 class MyViewController : UIViewController {
-    var pageNumber = 0
+    var pageNumber = 3
     var questionNumber = 0
     var thiefDotPosition = 0
-    var progressBarNumber = 0.93
+    var progressBarNumber = 0.85
     var lostDataNumber = 0
     var isAnswerCorrect = true
     let texts = Texts()
@@ -105,7 +105,7 @@ class MyViewController : UIViewController {
     func setupThiefFaceImageView() {
         questionView.addSubview(thiefFaceImageView)
         thiefFaceImageView.frame = CGRect(x: 44, y: 22, width: 75, height: 75)
-        thiefFaceImageView.image = UIImage(named: "thief.png")
+        thiefFaceImageView.image = UIImage(named: "thiefFace.png")
     }
     
     func setupQuestionLabel() {
@@ -204,8 +204,8 @@ class MyViewController : UIViewController {
     
     func setupCharacterFaceOfHistoryViewImageView() {
         historyView.addSubview(CharacterfaceOfHistoryViewImageView)
-        CharacterfaceOfHistoryViewImageView.frame = CGRect(x: 44, y: 22, width: 75, height: 75)
-        CharacterfaceOfHistoryViewImageView.image = UIImage(named: "faceJoao.png")
+        CharacterfaceOfHistoryViewImageView.frame = CGRect(x: 44, y: 35, width: 75, height: 75)
+        CharacterfaceOfHistoryViewImageView.image = UIImage(named: "athlete.png")
     }
     
     func setupTextLabel(pageNumber: Int) {
@@ -236,8 +236,8 @@ class MyViewController : UIViewController {
         setupCharacterButton()
         setupThiefDotImageView()
         setupProgressView()
-        setupCharacterFaceImageView()
         setupSecurityLabel()
+        setupCharacterFaceImageView()
         setupLostDataLabel()
         setupCirclesDataImageView(view: fisrtCircleDataImageView, x: 370, y: 37)
         setupCirclesDataImageView(view: secondCircleDataImageView, x: 420, y: 37)
@@ -268,7 +268,7 @@ class MyViewController : UIViewController {
     
     func setupProgressView() {
         view.addSubview(progressView)
-        progressView.frame = CGRect(x: 118, y: 50, width: 160, height: 1200)
+        progressView.frame = CGRect(x: 98, y: 50, width: 160, height: 1200)
         let gradientView = GradientView(frame: progressView.bounds)
         progressView.trackImage = UIImage(view: gradientView)
         progressView.transform = CGAffineTransform(scaleX: -1.0, y: 13)
@@ -280,13 +280,13 @@ class MyViewController : UIViewController {
     
     func setupCharacterFaceImageView() {
         view.addSubview(characterFaceImageView)
-        characterFaceImageView.frame = CGRect(x:55, y:12, width: 60, height: 60)
-        characterFaceImageView.image = UIImage(named: "faceJoao.png")
+        characterFaceImageView.frame = CGRect(x:45, y:19, width: 60, height: 60)
+        characterFaceImageView.image = UIImage(named: "athlete.png")
     }
     
     func setupSecurityLabel() {
         view.addSubview(securityLabel)
-        securityLabel.frame = CGRect(x: 120, y: 5, width: 220, height: 40)
+        securityLabel.frame = CGRect(x: 135, y: 5, width: 220, height: 40)
         securityLabel.numberOfLines = 1
         securityLabel.font = UIFont(name:"BalooThambi2-Bold", size: 18)
         securityLabel.text = "Segurança"
@@ -533,7 +533,7 @@ class MyViewController : UIViewController {
     func animateProgressionBar() {
         UIView.animate(withDuration: 1.0) {
             if self.isAnswerCorrect {
-                self.progressBarNumber -= 0.065
+                self.progressBarNumber -= 0.057
                 self.progressView.setProgress(Float(self.progressBarNumber), animated: true)
             }
         }
