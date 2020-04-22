@@ -3,18 +3,20 @@
 import UIKit
 import PlaygroundSupport
 
-let cfURL1 = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
-CTFontManagerRegisterFontsForURL(cfURL1, CTFontManagerScope.process, nil)
-let cfURL2 = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
-CTFontManagerRegisterFontsForURL(cfURL2, CTFontManagerScope.process, nil)
-
-let answers = [(false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (false, true, false), (false, false, true), (true, false, false), (false, false, true), (true, false, false), (false, false, true)]
-let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
-let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8), (x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
-var buttonStateAuxiliar = (0, 0, 0)
+let cfURLMontserrat = Bundle.main.url(forResource: "Montserrat-SemiBold", withExtension: "ttf")! as CFURL
+   CTFontManagerRegisterFontsForURL(cfURLMontserrat, CTFontManagerScope.process, nil)
+let cfURLBalooThambi = Bundle.main.url(forResource: "BalooThambi2-Bold", withExtension: "ttf")! as CFURL
+   CTFontManagerRegisterFontsForURL(cfURLBalooThambi, CTFontManagerScope.process, nil)
 
 class MyViewController : UIViewController {
-    var pageNumber = 3
+   
+
+    let answers = [(false, true, false), (false, false, true), (false, true, false), (false, false, true), (false, false, true), (false, true, false), (true, false, false), (true, false, false), (false, false, true), (false, true, false), (false, false, true), (false, false, true), (true, false, false), (false, false, true), (true, false, false)]
+    let characterCoordinates = [(x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8), (x: 705, y: 70)]
+    let thiefCoordinates = [(x: 50, y: 562), (x: 63.5, y: 497.5), (x: 92.3, y: 420.8), (x: 128.5, y: 357.0), (x: 171.0, y: 283.5), (x: 246.4, y: 262.2), (x: 305.0, y: 302.5), (x: 362.5, y: 326.0), (x: 428.6, y: 324), (x: 476.2, y: 313.0), (x: 492.1, y: 259.5), (x: 431.3, y: 211.0), (x: 407.3, y: 156.3), (x: 433.0, y: 99.8), (x: 497.3, y: 70.5), (x: 555.9, y: 70.25), (x: 625.0, y: 67.0), (x: 696.5, y: 63.8)]
+    var buttonStateAuxiliar = (0, 0, 0)
+    
+    var pageNumber = 0
     var questionNumber = 0
     var thiefDotPosition = 0
     var progressBarNumber = 0.85
@@ -50,28 +52,23 @@ class MyViewController : UIViewController {
     let thiefDotImageView = UIImageView()
     
     //UILabel
-    let questionLabel = UITextView()
+    let questionTextView = UITextView()
     let lostDataLabel = UILabel()
     let securityLabel = UILabel()
     
     //UITextView
-    let textLabel = UITextView()
+    let historyTextView = UITextView()
     
     //UIProgressView
     let progressView = UIProgressView()
-    
-    //UITapGestureRecognizer
-    let tap = UITapGestureRecognizer()
     
     override func loadView() {
         let view = UIView()
         view.backgroundColor = .white
         self.view = view
-        view.isUserInteractionEnabled = true
         setupSubviewsOfView()
         setupSubviewsOfHistoryView()
         setupSubviewsOfQuestionView()
-        backgroundImageView.isUserInteractionEnabled = true
     }
     
     override func viewDidLoad() {
@@ -81,20 +78,13 @@ class MyViewController : UIViewController {
         secondQuestionButton.addTarget(self, action: #selector(MyViewController.touchedSecondQuestionButton), for: .touchUpInside)
         thirdQuestionButton.addTarget(self, action: #selector(MyViewController.touchedThirdQuestionButton), for: .touchUpInside)
         confirmButton.addTarget(self, action: #selector(MyViewController.touchedConfirmButton), for: .touchUpInside)
-        tap.addTarget(self, action: #selector(MyViewController.handleTap))
         closeButton.addTarget(self, action: #selector(MyViewController.touchedCloseButton), for: .touchUpInside)
-        view.addGestureRecognizer(tap)
-    }
-    
-    
-    @objc func handleTap() {
-        print(tap.location(in: view))
     }
     
     //MARK: Setups
     func setupSubviewsOfQuestionView() {
         setupThiefFaceImageView()
-        setupQuestionLabel()
+        setupQuestionTextView()
         setupFirstQuestionButton()
         setupSecondQuestionButton()
         setupThirdQuestionButton()
@@ -108,14 +98,14 @@ class MyViewController : UIViewController {
         thiefFaceImageView.image = UIImage(named: "thiefFace.png")
     }
     
-    func setupQuestionLabel() {
-        questionView.addSubview(questionLabel)
-        questionLabel.frame = CGRect(x: 125, y: 15, width: 520, height: 150)
-        questionLabel.isUserInteractionEnabled = false
-        questionLabel.backgroundColor = questionView.backgroundColor
-        questionLabel.font = UIFont(name:"BalooThambi2-Bold", size: 20)
-        questionLabel.text = texts.questionTexts[questionNumber]
-        questionLabel.textAlignment = .justified
+    func setupQuestionTextView() {
+        questionView.addSubview(questionTextView)
+        questionTextView.frame = CGRect(x: 125, y: 15, width: 520, height: 150)
+        questionTextView.isUserInteractionEnabled = false
+        questionTextView.backgroundColor = questionView.backgroundColor
+        questionTextView.font = UIFont(name:"BalooThambi2-Bold", size: 20)
+        questionTextView.text = texts.questionTexts[questionNumber]
+        questionTextView.textAlignment = .justified
     }
     
     func setupFirstQuestionButton() {
@@ -184,7 +174,7 @@ class MyViewController : UIViewController {
         setupCharacterFaceOfHistoryViewImageView()
         setupLockImageView()
         setupCloudImageView()
-        setupTextLabel(pageNumber: pageNumber)
+        setupHistoryTextView(pageNumber: pageNumber)
         setupNextButton()
     }
     
@@ -208,19 +198,19 @@ class MyViewController : UIViewController {
         CharacterfaceOfHistoryViewImageView.image = UIImage(named: "athlete.png")
     }
     
-    func setupTextLabel(pageNumber: Int) {
-        historyView.addSubview(textLabel)
-        textLabel.frame = CGRect(x: 138, y: 43, width: 510, height: 320)
-        textLabel.attributedText = setLineSpacing(lineSpacing: 15, text: texts.presentetionTexts[pageNumber])
-        textLabel.typeOn {
+    func setupHistoryTextView(pageNumber: Int) {
+        historyView.addSubview(historyTextView)
+        historyTextView.frame = CGRect(x: 138, y: 43, width: 510, height: 320)
+        historyTextView.attributedText = setLineSpacing(lineSpacing: 15, text: texts.presentetionTexts[pageNumber])
+        historyTextView.typeOn {
             self.nextButton.isEnabled = true
             if (pageNumber == 0) {
                 self.nextButton.flash(howManyTimes: 2)
             }
         }
-        textLabel.font = UIFont(name: "Montserrat-SemiBold", size: 26)
-        textLabel.backgroundColor = historyView.backgroundColor
-        textLabel.isUserInteractionEnabled = false
+        historyTextView.font = UIFont(name: "Montserrat-SemiBold", size: 26)
+        historyTextView.backgroundColor = historyView.backgroundColor
+        historyTextView.isUserInteractionEnabled = false
     }
     
     func setupNextButton() {
@@ -257,7 +247,6 @@ class MyViewController : UIViewController {
         view.addSubview(characterButton)
         characterButton.frame = CGRect(x: characterCoordinates[questionNumber].x, y: characterCoordinates[questionNumber].y, width: 28, height: 28)
         characterButton.setImage(UIImage(named:"dotJoao.png"), for: .normal)
-        characterButton.isUserInteractionEnabled = true
     }
     
     func setupThiefDotImageView() {
@@ -328,11 +317,11 @@ class MyViewController : UIViewController {
         nextButton.isEnabled = false
         if pageNumber < 3 {
             pageNumber += 1
-            setupTextLabel(pageNumber: pageNumber)
+            setupHistoryTextView(pageNumber: pageNumber)
         } else {
             historyView.isHidden = true
             backgroundImageView.alpha = 1
-            characterButton.flash(howManyTimes: 1000)
+            characterButton.flash(howManyTimes: 100000)
         }
     }
     
@@ -347,6 +336,7 @@ class MyViewController : UIViewController {
             confirmButton.backgroundColor = #colorLiteral(red: 0.768627451, green: 0.768627451, blue: 0.768627451, alpha: 1)
             closeButton.isHidden = true
         }
+        //showSucceedView()
     }
     
     @IBAction func touchedFirstQuestionButton() {
@@ -397,14 +387,18 @@ class MyViewController : UIViewController {
     }
     
     @IBAction func touchedCloseButton() {
-        questionNumber += 1
+        if questionNumber < 15 {
+            questionNumber += 1
+            updateQuestionViewLabels()
+            updateQuestionViewButtons()
+            enableQuestionButtons()
+            setButtonStateAuxiliarValuesToZero()
+        } else {
+            //CHAMAAFUNCAOQUEFAZAPARECER A VIEW DO SUCESSO
+        }
         questionView.isHidden = true
         characterButton.isHidden = false
-        enableQuestionButtons()
         characterButton.unflash()
-        setButtonStateAuxiliarValuesToZero()
-        updateQuestionViewLabels()
-        updateQuestionViewButtons()
         animateCharacterButton()
         if isAnswerCorrect {
             animateProgressionBar()
@@ -418,79 +412,95 @@ class MyViewController : UIViewController {
         }
     }
     
+//    func showSucceedView() {
+//        histo.isHidden = false
+//        questionTextView.isHidden = true
+//        firstQuestionButton.isHidden = true
+//        secondQuestionButton.isHidden = true
+//        thirdQuestionButton.isHidden = true
+//        confirmButton.isHidden = true
+//        closeButton.isHidden = true
+//        let succeedTopLabel = UILabel()
+//        succeedTopLabel.frame = CGRect(x:132, y: 58, width: 504, height: 100)
+//        succeedTopLabel.text = "Parabéns!\nVocê conseguiu me salvar com"
+//        succeedTopLabel.font = UIFont(name:"BalooThambi2-Bold", size: 36)
+//        succeedTopLabel.numberOfLines = 0
+//        questionView.addSubview(succeedTopLabel)
+//
+//    }
+    //MARK: Auxiliar Functions
     func enableQuestionButtons() {
         firstQuestionButton.isEnabled = true
         secondQuestionButton.isEnabled = true
         thirdQuestionButton.isEnabled = true
     }
     
-    //MARK: Auxiliar Functions
     func changeConfirmButtonToCloseButton() {
-           confirmButton.isHidden = true
-           closeButton.isHidden = false
-       }
-       
-       func modifyQuestionButtons() {
-           if buttonStateAuxiliar.0 == 1 {
-               modifyFirstQuestionButton()
-           } else if buttonStateAuxiliar.1 == 1 {
-               modifySecondQuestionButton()
-           } else {
-               modifyThirdQuestionButton()
-           }
-       }
-       
-       func modifyFirstQuestionButton() {
-           if isFirstButtonTrue() {
-               isAnswerCorrect = true
-               firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-           } else {
-               isAnswerCorrect = false
-               firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-               setTrueButtonToGreen()
-           }
-       }
-       
-       func modifySecondQuestionButton() {
-           if isSecondButtonTrue() {
-               isAnswerCorrect = true
-               secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-           } else {
-               isAnswerCorrect = false
-               secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-               setTrueButtonToGreen()
-           }
-       }
-       
-       func modifyThirdQuestionButton() {
-           if isThirdButtonTrue() {
-               isAnswerCorrect = true
-               thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-           } else {
-               isAnswerCorrect = false
-               thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
-               setTrueButtonToGreen()
-           }
-       }
-       
-       func setTrueButtonToGreen() {
-           if answers[questionNumber].0 {
-               firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
-               firstQuestionButton.shake()
-           } else if answers[questionNumber].1 {
-               secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
-               secondQuestionButton.shake()
-           } else {
-               thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
-               thirdQuestionButton.shake()
-           }
-       }
-       
-       func disableQuestionButtons() {
-           firstQuestionButton.isEnabled = false
-           secondQuestionButton.isEnabled = false
-           thirdQuestionButton.isEnabled = false
-       }
+        confirmButton.isHidden = true
+        closeButton.isHidden = false
+    }
+    
+    func modifyQuestionButtons() {
+        if buttonStateAuxiliar.0 == 1 {
+            modifyFirstQuestionButton()
+        } else if buttonStateAuxiliar.1 == 1 {
+            modifySecondQuestionButton()
+        } else {
+            modifyThirdQuestionButton()
+        }
+    }
+    
+    func modifyFirstQuestionButton() {
+        if isFirstButtonTrue() {
+            isAnswerCorrect = true
+            firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+        } else {
+            isAnswerCorrect = false
+            firstQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            setTrueButtonToGreen()
+        }
+    }
+    
+    func modifySecondQuestionButton() {
+        if isSecondButtonTrue() {
+            isAnswerCorrect = true
+            secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+        } else {
+            isAnswerCorrect = false
+            secondQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            setTrueButtonToGreen()
+        }
+    }
+    
+    func modifyThirdQuestionButton() {
+        if isThirdButtonTrue() {
+            isAnswerCorrect = true
+            thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+        } else {
+            isAnswerCorrect = false
+            thirdQuestionButton.backgroundColor = #colorLiteral(red: 1, green: 0.3333333333, blue: 0.3333333333, alpha: 1) //#FF5555
+            setTrueButtonToGreen()
+        }
+    }
+    
+    func setTrueButtonToGreen() {
+        if answers[questionNumber].0 {
+            firstQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1) //#8BF359
+            firstQuestionButton.shake()
+        } else if answers[questionNumber].1 {
+            secondQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
+            secondQuestionButton.shake()
+        } else {
+            thirdQuestionButton.backgroundColor = #colorLiteral(red: 0.5450980392, green: 0.9529411765, blue: 0.3490196078, alpha: 1)
+            thirdQuestionButton.shake()
+        }
+    }
+    
+    func disableQuestionButtons() {
+        firstQuestionButton.isEnabled = false
+        secondQuestionButton.isEnabled = false
+        thirdQuestionButton.isEnabled = false
+    }
     
     func enableConfirmButton() {
         confirmButton.backgroundColor = #colorLiteral(red: 1, green: 0.8274509804, blue: 0.3647058824, alpha: 1) //#FFD35D
@@ -510,7 +520,7 @@ class MyViewController : UIViewController {
         for _ in 1...howManyTimes {
             thiefDotPosition += 1
             UIView.animate(withDuration: TimeInterval(howManyTimes)) {
-                self.thiefDotImageView.frame = CGRect(x: thiefCoordinates[self.thiefDotPosition].x, y: thiefCoordinates[self.thiefDotPosition].y, width: Double(self.thiefDotImageView.frame.size.width), height: Double(self.thiefDotImageView.frame.size.height))
+                self.thiefDotImageView.frame = CGRect(x: self.thiefCoordinates[self.thiefDotPosition].x, y: self.thiefCoordinates[self.thiefDotPosition].y, width: Double(self.thiefDotImageView.frame.size.width), height: Double(self.thiefDotImageView.frame.size.height))
             }
         }
     }
@@ -546,16 +556,13 @@ class MyViewController : UIViewController {
     }
     
     func updateQuestionViewLabels() {
-        questionLabel.text = texts.questionTexts[questionNumber]
+        questionTextView.text = texts.questionTexts[questionNumber]
     }
     
     func updateQuestionViewButtons() {
         setupFirstQuestionButton()
         setupSecondQuestionButton()
         setupThirdQuestionButton()
-        firstQuestionButton.isUserInteractionEnabled = true
-        secondQuestionButton.isUserInteractionEnabled = true
-        thirdQuestionButton.isUserInteractionEnabled = true
         confirmButton.isHidden = true
     }
     
@@ -593,7 +600,7 @@ class MyViewController : UIViewController {
     
     func animateCharacterButton() {
         UIView.animate(withDuration: 1.0) {
-            self.characterButton.frame = CGRect(x: characterCoordinates[self.questionNumber].x, y: characterCoordinates[self.questionNumber].y, width: Double(self.characterButton.frame.size.width), height: Double(self.characterButton.frame.size.height))
+            self.characterButton.frame = CGRect(x: self.characterCoordinates[self.questionNumber].x, y: self.characterCoordinates[self.questionNumber].y, width: Double(self.characterButton.frame.size.width), height: Double(self.characterButton.frame.size.height))
         }
     }
     
@@ -620,3 +627,4 @@ class MyViewController : UIViewController {
 let mvc = MyViewController()
 mvc.preferredContentSize = CGSize(width: 768, height: 600)
 PlaygroundPage.current.liveView = mvc
+//
